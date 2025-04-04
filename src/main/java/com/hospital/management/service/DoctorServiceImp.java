@@ -1,6 +1,7 @@
 package com.hospital.management.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ public class DoctorServiceImp implements DoctorService{
 	private DoctorRepository doctorRepository;
 
 	@Override
-	public Doctor saveDoctor(Doctor doctor) {
+	public Doctor addDoctor(Doctor doctor) throws GlobalException{
 		return doctorRepository.save(doctor);
 	}
 
@@ -24,7 +25,17 @@ public class DoctorServiceImp implements DoctorService{
 	public List<Doctor> getAllDoctors() {
 		return doctorRepository.findAll();
 	}
-
+	
+	@Override
+	public void deleteDoctor(Integer id) {
+		doctorRepository.deleteById(id);
+	}
+	
+	@Override
+	public Optional<Doctor> getDoctorById(Integer Id){
+		return doctorRepository.findById(Id);
+	}
+	
 	@Override
 	public List<Doctor> saveDoctors(List<Doctor> doctor) throws GlobalException{
 		try {

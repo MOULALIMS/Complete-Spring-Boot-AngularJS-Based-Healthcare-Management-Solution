@@ -1,10 +1,22 @@
 package com.hospital.management.service;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.hospital.management.dao.Appointment;
-import com.hospital.management.error.GlobalException;
 
 public interface AppointmentService {
 
-	public Appointment createAppointment(Integer pid, Integer did) throws GlobalException;
+	public Optional<Appointment> getAppointmentById(Integer id);
+
+	public List<Appointment> getAllAppointments();
+
+	public Appointment addAppointment(Appointment appointment);
+
+	public void deleteAppointment(Integer id);
+
+	public List<Appointment> getAppointmentsByUserId(Integer userId);
+
+	List<Appointment> getAppointmentsByDoctorId(Integer doctorId);
 
 }

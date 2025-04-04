@@ -1,104 +1,107 @@
 package com.hospital.management.dao;
 
 import java.sql.Date;
+import java.util.List;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Temporal;
+import jakarta.persistence.*;
 
-@MappedSuperclass
+@Entity
+@Table(name = "user")
 public class User {
-	
-	@Column(name = "first_name")
-	private String FirstName;
-	
-	@Column(name = "middle_name")
-	private String MiddleName;
-	
-	@Column(name = "last_name")
-	private String LastName;
-	
-	@Column(name = "email_address")
-	private String Email;
-	
-	@Column(name = "password")
-	private String Password;
-	
-	@Column(name = "phone")
-	private String Phone;
-	
-	@Enumerated(EnumType.STRING)
-	private UserRole role;
-	
-	@Column(name = "date_of_birth")
-	private Date dateOfBirth;
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_id")
+    private Integer userId;
+    
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
+    
+    @Column(name = "middle_name")
+    private String middleName;
+    
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
+    
+    @Column(name = "email", nullable = false, unique = true)
+    private String email;
+    
+    @Column(name = "password", nullable = false)
+    private String password;
+    
+    @Column(name = "phone", nullable = false, unique = true)
+    private String phone;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
+        
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointment;
+    
+    @Column(name = "date_of_birth")
+    private Date dateOfBirth;
 
-	public User() {
-		super();
-		// TODO Auto-generated constructor stub
+    public User() {}
+
+    public User(String firstName, String middleName, String lastName, String email, 
+                String password, String phone, UserRole role, Date dateOfBirth) {
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.role = role;
+        this.dateOfBirth = dateOfBirth;
+    }
+
+	public String getFirstName() {
+		return firstName;
 	}
 
-	public User(String userFirstName, String userMiddleName, String userLastName, String userEmail, String userPassword,
-			String userPhone, UserRole role, Date date) {
-		super();
-		this.FirstName = userFirstName;
-		this.MiddleName = userMiddleName;
-		this.LastName = userLastName;
-		this.Email = userEmail;
-		this.Password = userPassword;
-		this.Phone = userPhone;
-		this.role = role;
-		this.dateOfBirth = date;
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
 	}
 
-	public String getUserFirstName() {
-		return FirstName;
+	public String getMiddleName() {
+		return middleName;
 	}
 
-	public void setUserFirstName(String userFirstName) {
-		this.FirstName = userFirstName;
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
 	}
 
-	public String getUserMiddleName() {
-		return MiddleName;
+	public String getLastName() {
+		return lastName;
 	}
 
-	public void setUserMiddleName(String userMiddleName) {
-		this.MiddleName = userMiddleName;
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
 	}
 
-	public String getUserLastName() {
-		return LastName;
+	public String getEmail() {
+		return email;
 	}
 
-	public void setUserLastName(String userLastName) {
-		this.LastName = userLastName;
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
-	public String getUserEmail() {
-		return Email;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setUserEmail(String userEmail) {
-		this.Email = userEmail;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
-	public String getUserPassword() {
-		return Password;
+	public String getPhone() {
+		return phone;
 	}
 
-	public void setUserPassword(String userPassword) {
-		this.Password = userPassword;
-	}
-
-	public String getUserPhone() {
-		return Phone;
-	}
-
-	public void setUserPhone(String userPhone) {
-		this.Phone = userPhone;
+	public void setPhone(String phone) {
+		this.phone = phone;
 	}
 
 	public UserRole getRole() {
@@ -109,11 +112,12 @@ public class User {
 		this.role = role;
 	}
 
-	@Override
-	public String toString() {
-		return "User [userFirstName=" + FirstName + ", userMiddleName=" + MiddleName + ", userLastName="
-				+ LastName + ", userEmail=" + Email + ", userPassword=" + Password + ", userPhone="
-				+ Phone + ", role=" + role + "]";
+	public List<Appointment> getAppointment() {
+		return appointment;
+	}
+
+	public void setAppointment(List<Appointment> appointment) {
+		this.appointment = appointment;
 	}
 
 	public Date getDateOfBirth() {
@@ -123,5 +127,9 @@ public class User {
 	public void setDateOfBirth(Date dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
-	
+
+	public Integer getUserId() {
+		return userId;
+	}
+    
 }

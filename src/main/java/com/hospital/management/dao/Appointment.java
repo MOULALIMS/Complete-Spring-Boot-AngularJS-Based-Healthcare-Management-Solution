@@ -3,8 +3,6 @@ package com.hospital.management.dao;
 import java.sql.Date;
 import java.sql.Time;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -19,19 +17,18 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "appointment")
 public class Appointment {
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "appointment_id")
-	private Integer appointmentID;
+	private Integer appointmentId;
 	
 	@ManyToOne
-	@JsonIgnore
-	@JoinColumn(name = "patient_id", nullable = true)
-	private Patient patient;
+	@JoinColumn(name = "user_id", nullable = false)
+	private User user;
 	
 	@ManyToOne
-	@JsonIgnore
-	@JoinColumn(name = "doctor_id", nullable = true)
+	@JoinColumn(name = "doctor_id", nullable = false)
 	private Doctor doctor;
 	
 	@Column(name = "appointment_date", nullable = true)
@@ -43,17 +40,43 @@ public class Appointment {
 	@Enumerated(EnumType.STRING)
 	private AppointmentStatus appointmentStatus;
 
+	
+	public Appointment() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
+
+
+	public Appointment(User user, Doctor doctor, Date dateOfAppointment, Time appointmentTime,
+			AppointmentStatus appointmentStatus) {
+		super();
+		this.user = user;
+		this.doctor = doctor;
+		this.dateOfAppointment = dateOfAppointment;
+		this.appointmentTime = appointmentTime;
+		this.appointmentStatus = appointmentStatus;
+	}
+
+
 	public Integer getAppointmentID() {
-		return appointmentID;
+		return appointmentId;
+	}
+	
+
+	public User getUser() {
+		return user;
 	}
 
-	public Patient getPatient() {
-		return patient;
+
+	public void setUser(User user) {
+		this.user = user;
 	}
 
-	public void setPatient(Patient patient) {
-		this.patient = patient;
+
+	public Integer getAppointmentId() {
+		return appointmentId;
 	}
+
 
 	public Doctor getDoctor() {
 		return doctor;

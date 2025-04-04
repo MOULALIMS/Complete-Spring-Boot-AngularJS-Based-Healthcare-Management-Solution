@@ -1,86 +1,135 @@
 package com.hospital.management.dao;
 
-import java.sql.Date;
 import java.util.List;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import jakarta.persistence.*;
 
 @Entity
 @Table(name = "doctor")
-public class Doctor extends User {
-    
+public class Doctor {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "doctor_id")
     private Integer doctorId;
-    
-    @Column(name = "department_name")
-    private String doctorDepartmentName;
-    
-    @Column(name = "doctor_address")
-    private String doctorAddress;
-    
-    @Column(name = "doctor_age")
-    private Integer doctorAge;
-    
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
+
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
+
+    @Column(name = "middle_name")
+    private String middleName;
+
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
+
+    @Column(name = "email", unique = true, nullable = false)
+    private String email;
+
+    @Column(name = "phone", nullable = false)
+    private String phone;
+
+    @Column(name = "specialization", nullable = false)
+    private String specialization;
+
+    @Column(name = "experience_years")
+    private Integer experienceYears;
+
+    @Column(name = "qualifications", nullable = false)
+    private String qualifications;
+    /*
+    @OneToMany(mappedBy = "doctor")
     private List<Patient> patients;
+    */
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointment;
+    
+    public Doctor() {}
 
-    public Doctor() {
-        super();
+    public Doctor(String firstName, String middleName, String lastName, String email, 
+                  String phone, String specialization, Integer experienceYears, String qualifications) {
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phone = phone;
+        this.specialization = specialization;
+        this.experienceYears = experienceYears;
+        this.qualifications = qualifications;
     }
 
-    public Doctor(String userFirstName, String userMiddleName, String userLastName, String userEmail, String userPassword,
-                  String userPhone, UserRole role, String doctorDepartmentName, String doctorAddress, Integer doctorAge, Date date) {
-        super(userFirstName, userMiddleName, userLastName, userEmail, userPassword, userPhone, UserRole.DOCTOR, date);
-        this.doctorDepartmentName = doctorDepartmentName;
-        this.doctorAddress = doctorAddress;
-        this.doctorAge = doctorAge;
-    }
+	public String getFirstName() {
+		return firstName;
+	}
 
-    public Integer getDoctorId() {
-        return doctorId;
-    }
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
 
-    public String getDoctorDepartmentName() {
-        return doctorDepartmentName;
-    }
+	public String getMiddleName() {
+		return middleName;
+	}
 
-    public void setDoctorDepartmentName(String doctorDepartmentName) {
-        this.doctorDepartmentName = doctorDepartmentName;
-    }
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
 
-    public String getDoctorAddress() {
-        return doctorAddress;
-    }
+	public String getLastName() {
+		return lastName;
+	}
 
-    public void setDoctorAddress(String doctorAddress) {
-        this.doctorAddress = doctorAddress;
-    }
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
 
-    public Integer getDoctorAge() {
-        return doctorAge;
-    }
+	public String getEmail() {
+		return email;
+	}
 
-    public void setDoctorAge(Integer doctorAge) {
-        this.doctorAge = doctorAge;
-    }
+	public void setEmail(String email) {
+		this.email = email;
+	}
 
-    public List<Patient> getPatients() {
-        return patients;
-    }
+	public String getPhone() {
+		return phone;
+	}
 
-    public void setPatients(List<Patient> patients) {
-        this.patients = patients;
-    }
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
 
-    public void displayDoctorInfo() {
-        System.out.println("Doctor ID: " + doctorId);
-        System.out.println("Department: " + doctorDepartmentName);
-        System.out.println("Address: " + doctorAddress);
-        System.out.println("Age: " + doctorAge);
-    }
+	public String getSpecialization() {
+		return specialization;
+	}
+
+	public void setSpecialization(String specialization) {
+		this.specialization = specialization;
+	}
+
+	public Integer getExperienceYears() {
+		return experienceYears;
+	}
+
+	public void setExperienceYears(Integer experienceYears) {
+		this.experienceYears = experienceYears;
+	}
+
+	public String getQualifications() {
+		return qualifications;
+	}
+
+	public void setQualifications(String qualifications) {
+		this.qualifications = qualifications;
+	}
+
+	public List<Appointment> getAppointment() {
+		return appointment;
+	}
+
+	public void setAppointment(List<Appointment> appointment) {
+		this.appointment = appointment;
+	}
+
+	public Integer getDoctorId() {
+		return doctorId;
+	}
+    
 }
