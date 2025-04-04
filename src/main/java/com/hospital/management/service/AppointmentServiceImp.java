@@ -37,11 +37,11 @@ public class AppointmentServiceImp implements AppointmentService{
 
 	 @Override
 	 public List<Appointment> getAppointmentsByUserId(Integer userId) {
-		 return appointmentRepository.findByUserId(userId);
+		 return appointmentRepository.findByUserUserId(userId);
 	 }
 
 	 @Override
 	 public List<Appointment> getAppointmentsByDoctorId(Integer doctorId) {
-		 return appointmentRepository.findByDoctorId(doctorId);
+		 return appointmentRepository.findByDoctorDoctorId(doctorId);
 	 }
 }

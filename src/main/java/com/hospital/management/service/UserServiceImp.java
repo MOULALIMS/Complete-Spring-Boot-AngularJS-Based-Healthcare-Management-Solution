@@ -11,7 +11,7 @@ import com.hospital.management.dao.User;
 import com.hospital.management.repository.UserRepository;
 
 @Service
-public abstract class UserServiceImpl implements UserService{
+public class UserServiceImp implements UserService{
 	
 	@Autowired
 	private UserRepository userRepository;

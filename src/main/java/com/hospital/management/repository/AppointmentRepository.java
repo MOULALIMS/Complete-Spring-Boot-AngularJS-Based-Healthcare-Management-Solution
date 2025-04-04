@@ -9,7 +9,7 @@ import com.hospital.management.dao.Appointment;
 
 @Repository
 public interface AppointmentRepository extends JpaRepository<Appointment, Integer>{
-	public List<Appointment> findByUserId(Integer userId);
+	public List<Appointment> findByUserUserId(Integer userId);
 
-	public List<Appointment> findByDoctorId(Integer doctorId);
+	public List<Appointment> findByDoctorDoctorId(Integer doctorId);
 }
