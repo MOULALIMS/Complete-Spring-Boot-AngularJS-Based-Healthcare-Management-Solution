@@ -31,7 +31,7 @@ public class AppointmentController {
 		 return appointmentService.getAppointmentById(id);
 	 }
 
-	 @PostMapping
+	 @PostMapping("/addAppointment")
 	 public Appointment addAppointment(@RequestBody Appointment appointment) {
 		 return appointmentService.addAppointment(appointment);
 	 }
