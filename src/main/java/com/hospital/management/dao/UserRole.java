@@ -1,5 +1,5 @@
 package com.hospital.management.dao;
 
 public enum UserRole {
-	ADMIN, DOCTOR, STAFF, PATIENT
+	ADMIN, DOCTOR, STAFF, USER
 }

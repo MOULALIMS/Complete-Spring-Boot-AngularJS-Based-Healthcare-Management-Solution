@@ -3,6 +3,7 @@ package com.hospital.management.service;
 import java.util.List;
 import java.util.Optional;
 
+
 import com.hospital.management.dao.Appointment;
 
 public interface AppointmentService {
@@ -11,7 +12,7 @@ public interface AppointmentService {
 
 	public List<Appointment> getAllAppointments();
 
-	public Appointment addAppointment(Appointment appointment);
+	public Appointment addAppointment(Appointment appointment, Integer userId, Integer doctorId);
 
 	public void deleteAppointment(Integer id);
 

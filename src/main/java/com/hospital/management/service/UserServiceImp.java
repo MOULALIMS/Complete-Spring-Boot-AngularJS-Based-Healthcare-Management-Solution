@@ -2,7 +2,6 @@ package com.hospital.management.service;
 
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,6 +15,7 @@ public class UserServiceImp implements UserService{
 	@Autowired
 	private UserRepository userRepository;
 	
+	
 	@Override
     public User getUserById(Integer userId) {
         return userRepository.findById(userId)
@@ -28,7 +28,7 @@ public class UserServiceImp implements UserService{
 	}
 	
     @Override
-    public Optional<User> getUserByEmail(String email) {
+    public User getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 

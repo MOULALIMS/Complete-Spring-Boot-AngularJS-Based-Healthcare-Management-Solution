@@ -31,9 +31,9 @@ public class AppointmentController {
 		 return appointmentService.getAppointmentById(id);
 	 }
 
-	 @PostMapping("/addAppointment")
-	 public Appointment addAppointment(@RequestBody Appointment appointment) {
-		 return appointmentService.addAppointment(appointment);
+	 @PostMapping("/{uid}/addAppointment/{did}")
+	 public Appointment addAppointment(@RequestBody Appointment appointment, @PathVariable Integer uid, @PathVariable Integer did) {
+		 return appointmentService.addAppointment(appointment, uid, did);
 	 }
 
 	 @DeleteMapping("/{id}")

@@ -2,6 +2,10 @@ package com.hospital.management.dao;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,18 +28,20 @@ public class Appointment {
 	private Integer appointmentId;
 	
 	@ManyToOne
+	@JsonIgnore
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	
 	@ManyToOne
+	@JsonIgnore
 	@JoinColumn(name = "doctor_id", nullable = false)
 	private Doctor doctor;
 	
 	@Column(name = "appointment_date", nullable = true)
-	private Date dateOfAppointment;
+	private LocalDate dateOfAppointment;
 	
 	@Column(name = "appointment_time", nullable = true)
-	private Time appointmentTime;
+	private LocalTime appointmentTime;
 	
 	@Enumerated(EnumType.STRING)
 	private AppointmentStatus appointmentStatus;
@@ -47,7 +53,7 @@ public class Appointment {
 	}
 
 
-	public Appointment(User user, Doctor doctor, Date dateOfAppointment, Time appointmentTime,
+	public Appointment(User user, Doctor doctor, LocalDate dateOfAppointment, LocalTime appointmentTime,
 			AppointmentStatus appointmentStatus) {
 		super();
 		this.user = user;
@@ -86,19 +92,19 @@ public class Appointment {
 		this.doctor = doctor;
 	}
 
-	public Date getDateOfAppointment() {
+	public LocalDate getDateOfAppointment() {
 		return dateOfAppointment;
 	}
 
-	public void setDateOfAppointment(Date dateOfAppointment) {
+	public void setDateOfAppointment(LocalDate dateOfAppointment) {
 		this.dateOfAppointment = dateOfAppointment;
 	}
 
-	public Time getAppointmentTime() {
+	public LocalTime getAppointmentTime() {
 		return appointmentTime;
 	}
 
-	public void setAppointmentTime(Time appointmentTime) {
+	public void setAppointmentTime(LocalTime appointmentTime) {
 		this.appointmentTime = appointmentTime;
 	}
 
