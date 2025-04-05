@@ -76,4 +76,5 @@ public class AppointmentServiceImp implements AppointmentService{
 	 public List<Appointment> getAppointmentsByDoctorId(Integer doctorId) {
 		 return appointmentRepository.findByDoctorDoctorId(doctorId);
 	 }
+
 }

@@ -1,5 +1,5 @@
 package com.hospital.management.controller;
-import java.util.List;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,11 +14,6 @@ public class UserController {
 	@Autowired
     private UserService userService;
 
-    @GetMapping("/getAllUsers")
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
-    }
-
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Integer id) {
         return userService.getUserById(id);
@@ -29,8 +24,10 @@ public class UserController {
         return userService.addUser(user);
     }
 
+    /*
     @DeleteMapping("/{id}")
     public void deleteUser(@PathVariable Integer id) {
         userService.deleteUser(id);
     }
+    */
 }

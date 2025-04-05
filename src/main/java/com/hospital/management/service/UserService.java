@@ -12,4 +12,5 @@ public interface UserService{
 	public User addUser(User user);
 	public void deleteUser(Integer id);
 	//public boolean authenticateUser(String email, String password);
+	public List<User> addUsers(List<User> users);
 }

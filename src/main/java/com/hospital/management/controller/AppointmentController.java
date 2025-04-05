@@ -45,9 +45,4 @@ public class AppointmentController {
 	 public List<Appointment> getAppointmentsByUserId(@PathVariable Integer userId) {
 		 return appointmentService.getAppointmentsByUserId(userId);
 	 }
-
-	 @GetMapping("/doctor/{doctorId}")
-	 public List<Appointment> getAppointmentsByDoctorId(@PathVariable Integer doctorId) {
-		 return appointmentService.getAppointmentsByDoctorId(doctorId);
-	 }	
 }
