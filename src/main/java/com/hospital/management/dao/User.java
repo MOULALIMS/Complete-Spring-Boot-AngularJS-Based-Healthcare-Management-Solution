@@ -1,7 +1,10 @@
 package com.hospital.management.dao;
 
-import java.sql.Date;
+
+import java.time.LocalDate;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.*;
 
@@ -35,17 +38,23 @@ public class User {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
+    
+    @Column(name = "gender")
+    private Gender gender;
         
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointment;
     
     @Column(name = "date_of_birth")
-    private Date dateOfBirth;
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    private LocalDate dateOfBirth;
 
-    public User() {}
+    public User() {
+    	this.role = UserRole.USER;
+    }
 
     public User(String firstName, String middleName, String lastName, String email, 
-                String password, String phone, UserRole role, Date dateOfBirth) {
+                String password, Gender gender, String phone, UserRole role, LocalDate dateOfBirth) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -54,6 +63,8 @@ public class User {
         this.phone = phone;
         this.role = role;
         this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.role = UserRole.USER;
     }
 
 	public String getFirstName() {
@@ -120,16 +131,26 @@ public class User {
 		this.appointment = appointment;
 	}
 
-	public Date getDateOfBirth() {
+	public LocalDate getDateOfBirth() {
 		return dateOfBirth;
 	}
 
-	public void setDateOfBirth(Date dateOfBirth) {
+	public void setDateOfBirth(LocalDate dateOfBirth) {
 		this.dateOfBirth = dateOfBirth;
 	}
 
 	public Integer getUserId() {
 		return userId;
 	}
+
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+	
+	
     
 }

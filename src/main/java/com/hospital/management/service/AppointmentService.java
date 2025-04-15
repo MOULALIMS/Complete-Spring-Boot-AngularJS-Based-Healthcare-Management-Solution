@@ -5,6 +5,7 @@ import java.util.Optional;
 
 
 import com.hospital.management.dao.Appointment;
+import com.hospital.management.dao.AppointmentStatus;
 import com.hospital.management.error.GlobalException;
 
 public interface AppointmentService {
@@ -20,5 +21,7 @@ public interface AppointmentService {
 	public List<Appointment> getAppointmentsByUserId(Integer userId);
 
 	public List<Appointment> getAppointmentsByDoctorId(Integer doctorId) throws GlobalException;
+
+	public	boolean updateAppointmentStatus(Integer id);
 
 }

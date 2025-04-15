@@ -1,15 +1,14 @@
 package com.hospital.management.service;
 
 import java.util.List;
+
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.hospital.management.dao.Appointment;
+import com.hospital.management.dao.AppointmentStatus;
 import com.hospital.management.dao.Doctor;
 import com.hospital.management.dao.User;
 import com.hospital.management.error.RestResponseEntityExceptionHandler;
@@ -20,9 +19,7 @@ import com.hospital.management.repository.UserRepository;
 @Service
 public class AppointmentServiceImp implements AppointmentService{
 
-    private final RestResponseEntityExceptionHandler restResponseEntityExceptionHandler;
-
-	 @Autowired
+    @Autowired
 	 private AppointmentRepository appointmentRepository;
 	 
 	 @Autowired
@@ -32,7 +29,6 @@ public class AppointmentServiceImp implements AppointmentService{
 	 private UserRepository userRepository;
 
     AppointmentServiceImp(RestResponseEntityExceptionHandler restResponseEntityExceptionHandler) {
-        this.restResponseEntityExceptionHandler = restResponseEntityExceptionHandler;
     }
 
 	 @Override
@@ -76,5 +72,17 @@ public class AppointmentServiceImp implements AppointmentService{
 	 public List<Appointment> getAppointmentsByDoctorId(Integer doctorId) {
 		 return appointmentRepository.findByDoctorDoctorId(doctorId);
 	 }
+
+	@Override
+	public boolean updateAppointmentStatus(Integer id) {
+		Optional<Appointment> optional = appointmentRepository.findById(id);
+        if (optional.isPresent()) {
+            Appointment appointment = optional.get();
+            appointment.setAppointmentStatus(AppointmentStatus.APPROVED);
+            appointmentRepository.save(appointment);
+            return true;
+        }
+        return false;
+	}
 
 }

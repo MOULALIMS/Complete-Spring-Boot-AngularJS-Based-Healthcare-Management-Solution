@@ -26,6 +26,9 @@ public class Doctor {
 
     @Column(name = "phone", nullable = false)
     private String phone;
+    
+    @Column(name = "gender")
+    private Gender gender;
 
     @Column(name = "specialization", nullable = false)
     private String specialization;
@@ -42,10 +45,14 @@ public class Doctor {
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Appointment> appointment;
     
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserRole role;
+    
     public Doctor() {}
 
     public Doctor(String firstName, String middleName, String lastName, String email, 
-                  String phone, String specialization, Integer experienceYears, String qualifications) {
+                  String phone, Gender gender, String specialization, Integer experienceYears, String qualifications) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -54,6 +61,8 @@ public class Doctor {
         this.specialization = specialization;
         this.experienceYears = experienceYears;
         this.qualifications = qualifications;
+        this.gender = gender;
+        this.role = UserRole.DOCTOR;
     }
 
 	public String getFirstName() {
@@ -131,5 +140,18 @@ public class Doctor {
 	public Integer getDoctorId() {
 		return doctorId;
 	}
+
+	public Gender getGender() {
+		return gender;
+	}
+
+	public void setGender(Gender gender) {
+		this.gender = gender;
+	}
+
+	public UserRole getRole() {
+		return role;
+	}
+	
     
 }

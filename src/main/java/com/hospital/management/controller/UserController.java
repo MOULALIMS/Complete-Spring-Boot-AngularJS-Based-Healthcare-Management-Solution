@@ -7,27 +7,22 @@ import org.springframework.web.bind.annotation.*;
 import com.hospital.management.dao.User;
 import com.hospital.management.service.UserService;
 
+@CrossOrigin(origins = "http://localhost:4200")
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api")
 public class UserController {
 
 	@Autowired
     private UserService userService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/users/{id}")
     public User getUserById(@PathVariable Integer id) {
         return userService.getUserById(id);
     }
 
-    @PostMapping("/addUser")
+    @PostMapping("/users/addUser")
     public User addUser(@RequestBody User user) {
         return userService.addUser(user);
     }
 
-    /*
-    @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable Integer id) {
-        userService.deleteUser(id);
-    }
-    */
 }

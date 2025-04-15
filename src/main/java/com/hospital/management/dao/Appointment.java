@@ -1,10 +1,9 @@
 package com.hospital.management.dao;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
@@ -38,6 +37,7 @@ public class Appointment {
 	private Doctor doctor;
 	
 	@Column(name = "appointment_date", nullable = true)
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate dateOfAppointment;
 	
 	@Column(name = "appointment_time", nullable = true)
