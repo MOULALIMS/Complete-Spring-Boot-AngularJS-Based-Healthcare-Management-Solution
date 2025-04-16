@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.hospital.management.dao.AppointmentStatus;
 import com.hospital.management.dao.Receptionist;
 import com.hospital.management.service.AppointmentService;
 import com.hospital.management.service.StaffService;

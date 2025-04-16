@@ -6,6 +6,7 @@ import java.time.LocalTime;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -42,6 +44,9 @@ public class Appointment {
 	
 	@Column(name = "appointment_time", nullable = true)
 	private LocalTime appointmentTime;
+	
+	@OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
+	private Prescription prescription;
 	
 	@Enumerated(EnumType.STRING)
 	private AppointmentStatus appointmentStatus;

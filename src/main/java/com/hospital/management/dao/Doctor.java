@@ -1,6 +1,11 @@
 package com.hospital.management.dao;
 
+import java.time.LocalDate;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -48,6 +53,15 @@ public class Doctor {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private UserRole role;
+    
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Prescription> prescriptions;
+    
+    @PrePersist
+    protected void onCreate() {
+        this.role = UserRole.DOCTOR;
+    }
     
     public Doctor() {}
 

@@ -11,6 +11,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 
 @Entity
@@ -54,10 +55,14 @@ public class Receptionist {
 	@Column(nullable = false)
 	private UserRole role;
 
+	@PrePersist
+	protected void onCreate() {
+		this.joiningDate = LocalDate.now();
+		this.role = UserRole.STAFF;
+	}
 	
 	public Receptionist() {
 		super();
-		this.role = UserRole.STAFF;
 	}
 
 

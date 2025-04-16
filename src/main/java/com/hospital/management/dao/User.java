@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 
@@ -43,11 +44,16 @@ public class User {
     private Gender gender;
         
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    //@JsonIgnore
     private List<Appointment> appointment;
     
     @Column(name = "date_of_birth")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
+    
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Prescription> prescriptions;
 
     public User() {
     	this.role = UserRole.USER;
@@ -150,7 +156,12 @@ public class User {
 	public void setGender(Gender gender) {
 		this.gender = gender;
 	}
-	
-	
-    
+
+	public List<Prescription> getPrescriptions() {
+		return prescriptions;
+	}
+
+	public void setPrescriptions(List<Prescription> prescriptions) {
+		this.prescriptions = prescriptions;
+	}
 }
