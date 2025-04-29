@@ -21,22 +21,22 @@ public class Receptionist {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = "staff_id")
-	private Integer staffId;
+	private Integer Id;
 	
 	@Column(name = "first_name", nullable = false, length = 10)
-	private String staffFirstName;
+	private String firstName;
 	
 	@Column(name = "middle_name")
-	private String staffMiddleName;
+	private String middleName;
 	
 	@Column(name = "last_name", nullable = false, length = 20)
-	private String staffLastName;
+	private String lastName;
 	
 	@Column(name = "email", nullable = false, unique = true)
-	private String staffEmail;
+	private String email;
 	
 	@Column(name = "phone", nullable = false, unique = true)
-	private String staffPhone;
+	private String phone;
 	
 	@Column(name = "password", nullable = false)
 	private String password;
@@ -68,66 +68,16 @@ public class Receptionist {
 
 	public Receptionist(String staffFirstName, String staffMiddleName, String staffLastName, String staffEmail,
 	        String staffPhone, String password, Gender gender, LocalDate joiningDate, String photoURL) {
-	    this.staffFirstName = staffFirstName;
-	    this.staffMiddleName = staffMiddleName;
-	    this.staffLastName = staffLastName;
-	    this.staffEmail = staffEmail;
-	    this.staffPhone = staffPhone;
+	    this.firstName = staffFirstName;
+	    this.middleName = staffMiddleName;
+	    this.lastName = staffLastName;
+	    this.email = staffEmail;
+	    this.phone = staffPhone;
 	    this.password = password;
 	    this.gender = gender;
 	    this.joiningDate = joiningDate;
 	    this.photoURL = photoURL;
 	    this.role = UserRole.STAFF;
-	}
-
-
-	public String getStaffFirstName() {
-		return staffFirstName;
-	}
-
-
-	public void setStaffFirstName(String staffFirstName) {
-		this.staffFirstName = staffFirstName;
-	}
-
-
-	public String getStaffMiddleName() {
-		return staffMiddleName;
-	}
-
-
-	public void setStaffMiddleName(String staffMiddleName) {
-		this.staffMiddleName = staffMiddleName;
-	}
-
-
-	public String getStaffLastName() {
-		return staffLastName;
-	}
-
-
-	public void setStaffLastName(String staffLastName) {
-		this.staffLastName = staffLastName;
-	}
-
-
-	public String getStaffEmail() {
-		return staffEmail;
-	}
-
-
-	public void setStaffEmail(String staffEmail) {
-		this.staffEmail = staffEmail;
-	}
-
-
-	public String getStaffPhone() {
-		return staffPhone;
-	}
-
-
-	public void setStaffPhone(String staffPhone) {
-		this.staffPhone = staffPhone;
 	}
 
 
@@ -171,9 +121,7 @@ public class Receptionist {
 	}
 
 
-	public Integer getStaffId() {
-		return staffId;
-	}
+	
 
 	
 	public String getPassword() {
@@ -185,13 +133,48 @@ public class Receptionist {
 		this.password = password;
 	}
 
+	public String getFirstName() {
+		return firstName;
+	}
 
-	@Override
-	public String toString() {
-		return "Receptionist [staffId=" + staffId + ", staffFirstName=" + staffFirstName + ", staffMiddleName="
-				+ staffMiddleName + ", staffLastName=" + staffLastName + ", staffEmail=" + staffEmail + ", staffPhone="
-				+ staffPhone + ", gender=" + gender + ", joiningDate=" + joiningDate + ", photoURL=" + photoURL
-				+ ", role=" + role + "]";
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+
+	public String getMiddleName() {
+		return middleName;
+	}
+
+	public void setMiddleName(String middleName) {
+		this.middleName = middleName;
+	}
+
+	public String getLastName() {
+		return lastName;
+	}
+
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+
+	public String getEmail() {
+		return email;
+	}
+
+	public void setEmail(String email) {
+		this.email = email;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public Integer getId() {
+		return Id;
 	}
 	
 	

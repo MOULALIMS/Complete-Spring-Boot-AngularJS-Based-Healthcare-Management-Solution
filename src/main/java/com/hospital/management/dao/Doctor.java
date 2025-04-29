@@ -1,12 +1,14 @@
 package com.hospital.management.dao;
 
-import java.time.LocalDate;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "doctor")
@@ -18,17 +20,25 @@ public class Doctor {
     private Integer doctorId;
 
     @Column(name = "first_name", nullable = false)
+    @NotBlank(message = "first name should not be null")
     private String firstName;
 
     @Column(name = "middle_name")
     private String middleName;
 
     @Column(name = "last_name", nullable = false)
+    @NotBlank(message = "Last name is required")
     private String lastName;
 
     @Column(name = "email", unique = true, nullable = false)
+    @NotBlank(message = "Email is required")
     private String email;
 
+    @Column(name = "password", nullable = false)
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
+    private String password;
+    
     @Column(name = "phone", nullable = false)
     private String phone;
     
@@ -36,18 +46,26 @@ public class Doctor {
     private Gender gender;
 
     @Column(name = "specialization", nullable = false)
+    @NotBlank(message = "Specialization is required")
     private String specialization;
 
     @Column(name = "experience_years")
+    @NotNull(message = "Experience is required")
+    @Min(value = 0, message = "Experience cannot be negative")
     private Integer experienceYears;
+    
+    @Column(name = "photoURL")
+    private String photoURL;
 
     @Column(name = "qualifications", nullable = false)
+    @NotBlank(message = "Qualifications are required")
     private String qualifications;
     /*
     @OneToMany(mappedBy = "doctor")
     private List<Patient> patients;
     */
     @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
     private List<Appointment> appointment;
     
     @Enumerated(EnumType.STRING)
@@ -66,7 +84,7 @@ public class Doctor {
     public Doctor() {}
 
     public Doctor(String firstName, String middleName, String lastName, String email, 
-                  String phone, Gender gender, String specialization, Integer experienceYears, String qualifications) {
+                  String phone, String pass, Gender gender, String specialization, Integer experienceYears, String qualifications, String URL) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -76,6 +94,8 @@ public class Doctor {
         this.experienceYears = experienceYears;
         this.qualifications = qualifications;
         this.gender = gender;
+        this.password = pass;
+        this.photoURL = URL;
         this.role = UserRole.DOCTOR;
     }
 
@@ -165,6 +185,30 @@ public class Doctor {
 
 	public UserRole getRole() {
 		return role;
+	}
+
+	public String getPhotoURL() {
+		return photoURL;
+	}
+
+	public void setPhotoURL(String photoURL) {
+		this.photoURL = photoURL;
+	}
+
+	public List<Prescription> getPrescriptions() {
+		return prescriptions;
+	}
+
+	public void setPrescriptions(List<Prescription> prescriptions) {
+		this.prescriptions = prescriptions;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
     

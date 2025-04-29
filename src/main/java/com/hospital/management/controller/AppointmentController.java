@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hospital.management.dao.Appointment;
+import com.hospital.management.error.GlobalException;
 import com.hospital.management.service.AppointmentService;
 
 @CrossOrigin(origins = "http://localhost:4200")
@@ -34,7 +36,7 @@ public class AppointmentController {
 	 }
 
 	 @PostMapping("/appointments/{uid}/addAppointment/{did}")
-	 public Appointment addAppointment(@RequestBody Appointment appointment, @PathVariable Integer uid, @PathVariable Integer did) {
+	 public Appointment addAppointment(@RequestBody Appointment appointment, @PathVariable Integer uid, @PathVariable Integer did) throws GlobalException {
 		 return appointmentService.addAppointment(appointment, uid, did);
 	 }
 
@@ -47,4 +49,5 @@ public class AppointmentController {
 	 public List<Appointment> getAppointmentsByUserId(@PathVariable Integer userId) {
 		 return appointmentService.getAppointmentsByUserId(userId);
 	 }
+	 
 }

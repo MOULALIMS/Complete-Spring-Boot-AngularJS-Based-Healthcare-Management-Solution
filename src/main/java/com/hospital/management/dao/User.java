@@ -42,9 +42,12 @@ public class User {
     
     @Column(name = "gender")
     private Gender gender;
+    
+    @Column(name = "photoURL")
+    private String photoURL;
         
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    //@JsonIgnore
+    @JsonIgnore
     private List<Appointment> appointment;
     
     @Column(name = "date_of_birth")
@@ -60,7 +63,7 @@ public class User {
     }
 
     public User(String firstName, String middleName, String lastName, String email, 
-                String password, Gender gender, String phone, UserRole role, LocalDate dateOfBirth) {
+                String password, Gender gender, String phone, UserRole role, LocalDate dateOfBirth, String url) {
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
@@ -70,6 +73,7 @@ public class User {
         this.role = role;
         this.dateOfBirth = dateOfBirth;
         this.gender = gender;
+        this.photoURL = url;
         this.role = UserRole.USER;
     }
 
@@ -164,4 +168,13 @@ public class User {
 	public void setPrescriptions(List<Prescription> prescriptions) {
 		this.prescriptions = prescriptions;
 	}
+
+	public String getPhotoURL() {
+		return photoURL;
+	}
+
+	public void setPhotoURL(String photoURL) {
+		this.photoURL = photoURL;
+	}
+	
 }

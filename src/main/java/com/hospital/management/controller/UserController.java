@@ -8,9 +8,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import com.hospital.management.dao.Appointment;
+import com.hospital.management.dao.Doctor;
 import com.hospital.management.dao.Prescription;
 import com.hospital.management.dao.User;
+import com.hospital.management.error.GlobalException;
 import com.hospital.management.service.AppointmentService;
+import com.hospital.management.service.DoctorService;
 import com.hospital.management.service.PrescriptionService;
 import com.hospital.management.service.UserService;
 
@@ -27,16 +30,31 @@ public class UserController {
 	
 	@Autowired
 	private PrescriptionService prescriptionService;
+	
+	@Autowired
+	private DoctorService doctorService;
 
     @GetMapping("/users/{id}")
     public User getUserById(@PathVariable Integer id) {
         return userService.getUserById(id);
+    }
+    
+    // Get All Doctors
+    @GetMapping("/users/doctors")
+    public List<Doctor> getAllDoctors() {
+        return doctorService.getAllDoctors();
     }
 
     @PostMapping("/users/addUser")
     public User addUser(@RequestBody User user) {
         return userService.addUser(user);
     }
+    
+    @GetMapping("/users/appointments/{id}")
+    public List<Appointment> getAppointmentsByUserId(@PathVariable Integer id) {
+        return appointmentService.getAppointmentsByUserId(id);
+    }
+
     
     // See Prescriptions
     @GetMapping("/users/getPrescriptions/{uid}")
@@ -47,7 +65,20 @@ public class UserController {
     
     // Add Appointment
     @PostMapping("/users/{uid}/addAppointment/{did}")
-	 public Appointment addAppointment(@RequestBody Appointment appointment, @PathVariable Integer uid, @PathVariable Integer did) {
-		 return appointmentService.addAppointment(appointment, uid, did);
-	 }
+	public Appointment addAppointment(@RequestBody Appointment appointment, @PathVariable Integer uid, @PathVariable Integer did) throws GlobalException {
+    	return appointmentService.addAppointment(appointment, uid, did);
+	}
+    
+    @GetMapping("/users/specialization/{specialization}")
+    public ResponseEntity<List<Doctor>> getDoctorsBySpecialization(@PathVariable String specialization) throws GlobalException{
+    	List<Doctor> doctor = doctorService.findDoctorsBySpecialization(specialization);
+    	return ResponseEntity.ok(doctor);
+    }
+    
+    // Update User
+    @PutMapping("/users/updateUser/{uid}")
+    public ResponseEntity<?> updateUser(@PathVariable Integer uid, @RequestBody User user) throws GlobalException{
+    	User existing = userService.updateUser(uid, user);
+    	return ResponseEntity.ok(existing);
+    }
 }

@@ -13,8 +13,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.hospital.management.dao.AuthResponse;
+import com.hospital.management.dao.Doctor;
 import com.hospital.management.dao.LoginRequest;
+import com.hospital.management.dao.Receptionist;
 import com.hospital.management.dao.User;
+import com.hospital.management.error.GlobalException;
+import com.hospital.management.service.DoctorService;
+import com.hospital.management.service.StaffService;
 import com.hospital.management.service.UserService;
 
 @RestController
@@ -23,30 +29,56 @@ import com.hospital.management.service.UserService;
 public class AuthController {
 	@Autowired
     private UserService userService;
+	
+	@Autowired
+	private DoctorService doctorService;
 
-    @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
-        Optional<User> user = userService.getUserByEmail(loginRequest.getEmail());
-        if(user.isPresent()) {
-        	User client = user.get();
-        	
-        	if(client.getPassword().equals(loginRequest.getPassword())) {
-        		 Map<String, String> response = new HashMap<>();
-                 response.put("message", "Login Successful!");
-                 response.put("role", client.getRole().toString());
-                 response.put("email", client.getEmail()); // optional
-                 return ResponseEntity.ok(response);
-        	}else {
-        		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Password");
-        	}
-        }else {
-        	return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User Not Found");
-        }
-    }
-    
-    @PostMapping("/registerUser")
-    public ResponseEntity<?> register(@RequestBody User user){
-    	User user1 = userService.addUser(user);
-    	return ResponseEntity.ok(user1);
-    }
+	@Autowired
+	private StaffService staffService;
+	
+	@PostMapping("/login")
+	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+	    Optional<User> user = userService.getUserByEmail(loginRequest.getEmail());
+	    
+	    if (user.isEmpty() || !user.get().getPassword().equals(loginRequest.getPassword())) {
+	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+	    }
+	    
+	    return ResponseEntity.ok(new AuthResponse(user.get()));
+	}
+
+	@PostMapping("/registerUser")
+	public ResponseEntity<?> register(@RequestBody User user) {
+	    try {
+	        User newUser = userService.addUser(user);
+	        return ResponseEntity.ok(new AuthResponse(newUser));
+	    } catch (Exception e) {
+	        return ResponseEntity.badRequest().body("Registration failed: " + e.getMessage());
+	    }
+	}
+	
+	@PostMapping("/doctor/login")
+	public ResponseEntity<?> loginDoctor(@RequestBody LoginRequest loginRequest) throws GlobalException{
+		Doctor doctor = doctorService.findDoctorByEmail(loginRequest.getEmail());
+		if(doctor == null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No User Found");
+		}
+		if(!doctor.getPassword().equals(loginRequest.getPassword())) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Credentials");
+		}
+		return ResponseEntity.ok(new AuthResponse(doctor));
+	}
+	
+	@PostMapping("/staff/login")
+	public ResponseEntity<?> staffLogin(@RequestBody LoginRequest loginRequest) throws GlobalException{
+		Receptionist staff = staffService.findStaffByEmail(loginRequest.getEmail());
+		if(staff==null) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Staff Found");
+		}
+		if(!staff.getPassword().equals(loginRequest.getPassword())) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid Credentials");
+		}
+		return ResponseEntity.ok(new AuthResponse(staff));
+	}	
+
 }

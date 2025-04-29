@@ -18,6 +18,8 @@ import com.hospital.management.service.DoctorService;
 import com.hospital.management.service.StaffService;
 import com.hospital.management.service.UserService;
 
+import jakarta.validation.Valid;
+
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api")
@@ -39,7 +41,7 @@ public class AdminController {
 
     // Add Multiple Doctors
     @PostMapping("/admin/addDoctors")
-    public List<Doctor> addDoctors(@RequestBody List<Doctor> doctor) throws GlobalException{
+    public List<Doctor> addDoctors(@Valid @RequestBody List<Doctor> doctor) throws GlobalException{
     	return doctorService.saveDoctors(doctor);
     }
     
@@ -51,8 +53,9 @@ public class AdminController {
 
     // Get doctor by ID
     @GetMapping("/admin/doctors/{id}")
-    public Optional<Doctor> getDoctorById(@PathVariable Integer id) {
-        return doctorService.getDoctorById(id);
+    public ResponseEntity<Doctor> getDoctorById(@PathVariable Integer id) throws GlobalException {
+    	Doctor doc = doctorService.getDoctorById(id);
+        return ResponseEntity.ok(doc);
     }
 
     // Add a new doctor
@@ -64,18 +67,17 @@ public class AdminController {
     // Update a doctor
     @PutMapping("/admin/doctors/{id}")
     public Doctor updateDoctor(@PathVariable Integer id, @RequestBody Doctor updatedDoctor) throws GlobalException {
-        Optional<Doctor> existing = doctorService.getDoctorById(id);
-        if (existing.isPresent()) {
-            Doctor doctor = existing.get();
-            doctor.setFirstName(updatedDoctor.getFirstName());
-            doctor.setLastName(updatedDoctor.getLastName());
-            doctor.setMiddleName(updatedDoctor.getMiddleName());
-            doctor.setPhone(updatedDoctor.getPhone());
-            doctor.setExperienceYears(updatedDoctor.getExperienceYears());
-            doctor.setQualifications(updatedDoctor.getQualifications());
-            doctor.setSpecialization(updatedDoctor.getSpecialization());
+        Doctor existing = doctorService.getDoctorById(id);
+        if (existing!=null) {
+            existing.setFirstName(updatedDoctor.getFirstName());
+            existing.setLastName(updatedDoctor.getLastName());
+            existing.setMiddleName(updatedDoctor.getMiddleName());
+            existing.setPhone(updatedDoctor.getPhone());
+            existing.setExperienceYears(updatedDoctor.getExperienceYears());
+            existing.setQualifications(updatedDoctor.getQualifications());
+            existing.setSpecialization(updatedDoctor.getSpecialization());
             
-            return doctorService.addDoctor(doctor);
+            return doctorService.addDoctor(existing);
         } else {
             throw new RuntimeException("Doctor not found with id " + id);
         }
@@ -106,24 +108,45 @@ public class AdminController {
         return appointmentService.getAllAppointments();
     }
 
+    /*
     // Get appointments by doctor ID
     @GetMapping("/admin/appointments/doctor/{doctorId}")
     public List<Appointment> getAppointmentsByDoctorId(@PathVariable Integer doctorId) throws GlobalException {
         return appointmentService.getAppointmentsByDoctorId(doctorId);
     }
-
+    */
     // Get appointments by user ID
     @GetMapping("/admin/appointments/user/{userId}")
     public List<Appointment> getAppointmentsByUserId(@PathVariable Integer userId) {
         return appointmentService.getAppointmentsByUserId(userId);
     }
     
+    // Get Appointments By doctor ID
+    @GetMapping("/admin/appointments/doctor/{doctorId}")
+	 public ResponseEntity<List<Appointment>> getAppointmentsByDoctor(@PathVariable Integer doctorId){
+    	List<Appointment> appointments = appointmentService.getAppointmentsByDoctorID(doctorId);
+    	return ResponseEntity.ok(appointments);
+    }
+    
+    
+    // Get Today Appointments
+    @GetMapping("/admin/todayAppointments")
+    public ResponseEntity<List<Appointment>> getTodayAppointments(){
+    	List<Appointment> appointments = appointmentService.getTodayApprovedAppointments();
+    	return ResponseEntity.ok(appointments);
+    }
     // ======================== STAFF ==========================
     
     // Get all Staff
     @GetMapping("/admin/staff")
     public List<Receptionist> getAllStaff(){
 		return staffService.getAllStaff();    	
+    }
+    
+    // Update Staff
+    @PutMapping("/admin/updateStaff/{id}")
+    public Receptionist updateStaff(@PathVariable Integer id, @RequestBody Receptionist receptionist) throws GlobalException{
+    	return staffService.updateStaff(id, receptionist);
     }
     
     // Save multiple Staff
@@ -139,12 +162,70 @@ public class AdminController {
     
     // Delete Staff by Id
     @DeleteMapping("admin/deleteStaff/{id}")
-    public ResponseEntity<String> deleteStaff(@PathVariable Integer id) throws GlobalException{
-    	try {
+    public void deleteStaff(@PathVariable Integer id) throws GlobalException{
+    	try{
     		staffService.deleteStaff(id);
-    		return ResponseEntity.ok("Staff with ID " + id + " deleted successfully.");
-    	}catch (RuntimeException e) {
-    		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-		}
+    	}catch(Exception e) {
+    		throw new GlobalException(e.getMessage());
+    	}
+    }
+    
+ // ======================== SEARCH FUNCTIONALITY ==========================
+
+    // --- Search Doctor ---
+    @GetMapping("/searchDoctorById/{id}")
+    public ResponseEntity<Doctor> searchDoctorById(@PathVariable Integer id) throws GlobalException {
+        Doctor doctor = doctorService.getDoctorById(id);
+        return ResponseEntity.ok(doctor);
+    }
+
+    @GetMapping("/searchDoctorByName/{name}")
+    public ResponseEntity<List<Doctor>> searchDoctorByName(@PathVariable String name) throws GlobalException {
+        List<Doctor> doctors = doctorService.findDoctorsByName(name);
+        return ResponseEntity.ok(doctors);
+    }
+
+    @GetMapping("/searchDoctorByEmail/{email}")
+    public ResponseEntity<Doctor> searchDoctorByEmail(@PathVariable String email) throws GlobalException {
+        Doctor doctor = doctorService.findDoctorByEmail(email);
+        return ResponseEntity.ok(doctor);
+    }
+
+    @GetMapping("/searchDoctorBySpecialization/{specialization}")
+    public ResponseEntity<List<Doctor>> searchDoctorBySpecialization(@PathVariable String specialization) throws GlobalException {
+        List<Doctor> doctors = doctorService.findDoctorsBySpecialization(specialization);
+        return ResponseEntity.ok(doctors);
+    }
+
+    // --- Search Staff ---
+    @GetMapping("/searchStaffById/{id}")
+    public ResponseEntity<Receptionist> searchStaffById(@PathVariable Integer id) throws GlobalException {
+        Receptionist staff = staffService.findStaffById(id);
+        return ResponseEntity.ok(staff);
+    }
+
+    @GetMapping("/searchStaffByName/{name}")
+    public ResponseEntity<List<Receptionist>> searchStaffByName(@PathVariable String name) throws GlobalException {
+        List<Receptionist> staffList = staffService.findStaffByName(name);
+        return ResponseEntity.ok(staffList);
+    }
+
+    // --- Search User ---
+    @GetMapping("/searchUserById/{id}")
+    public ResponseEntity<User> searchUserById(@PathVariable Integer id) throws GlobalException {
+        User user = userService.getUserById(id);
+        return ResponseEntity.ok(user);
+    }
+
+    @GetMapping("/searchUserByName/{name}")
+    public ResponseEntity<List<User>> searchUserByName(@PathVariable String name) throws GlobalException {
+        List<User> users = userService.findUsersByName(name);
+        return ResponseEntity.ok(users);
+    }
+
+    @GetMapping("/searchUserByEmail/{email}")
+    public ResponseEntity<User> searchUserByEmail(@PathVariable String email) throws GlobalException {
+        User user = userService.findUserByEmail(email);
+        return ResponseEntity.ok(user);
     }
 }

@@ -13,8 +13,16 @@ public interface DoctorService {
 
 	public Doctor addDoctor(Doctor doctor) throws GlobalException;
 
-	public Optional<Doctor> getDoctorById(Integer id);
+	public Doctor getDoctorById(Integer id) throws GlobalException;
 
 	public void deleteDoctor(Integer id);
+
+	public List<Doctor> findDoctorsByName(String name) throws GlobalException;
+
+	public Doctor findDoctorByEmail(String email) throws GlobalException;
+
+	public List<Doctor> findDoctorsBySpecialization(String specialization) throws GlobalException;
+
+	public Doctor updateDoctor(Integer did, Doctor doctor) throws GlobalException;
 	
 }

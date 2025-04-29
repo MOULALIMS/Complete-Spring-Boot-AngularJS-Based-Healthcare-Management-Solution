@@ -35,7 +35,12 @@ public class PrescriptionServiceImp implements PrescriptionService{
 	private AppointmentRepository appointmentRepository;
 
 	@Override
-	public ResponseEntity<Prescription> createPrescription(Integer did, Integer uid, Integer aid, Prescription prescription) {
+	public ResponseEntity<Prescription> createPrescription(Integer did, Integer uid, Integer aid, Prescription prescription) throws GlobalException {
+		Optional<Prescription> existingPrescription = prescriptionRepository.findByAppointmentAppointmentId(aid);
+        if (existingPrescription.isPresent()) {
+            throw new GlobalException("Prescription already exists for this appointment. Please update instead.");
+        }
+		
 		Optional<Doctor> doctor = doctorRepository.findById(did);
 		if(!doctor.isPresent()) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
@@ -51,7 +56,9 @@ public class PrescriptionServiceImp implements PrescriptionService{
 		}
 		User u = user.get();
 		Appointment a = aOptional.get();
-		
+		if(!a.getDoctor().getDoctorId().equals(did)) {
+			throw new GlobalException("Doctor ID doesn't match to create prescription!");
+		}
 		if(!a.getAppointmentStatus().equals(AppointmentStatus.APPROVED)) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
@@ -94,5 +101,39 @@ public class PrescriptionServiceImp implements PrescriptionService{
 	@Override
 	public List<Prescription> getPrescriptionsByUserId(Integer uid) {
 		return prescriptionRepository.findPrescriptionsByUserUserId(uid);
+	}
+	
+	@Override
+    public Prescription getPrescriptionByAppointmentId(Integer doctorId, Integer appointmentId) throws GlobalException {
+        // Check if doctor exists
+        Optional<Doctor> doctor = doctorRepository.findById(doctorId);
+        if (!doctor.isPresent()) {
+            throw new GlobalException("Doctor not found with ID: " + doctorId);
+        }
+        
+        // Check if appointment exists
+        Optional<Appointment> appointment = appointmentRepository.findById(appointmentId);
+        if (!appointment.isPresent()) {
+            throw new GlobalException("Appointment not found with ID: " + appointmentId);
+        }
+        
+        // Verify doctor is authorized to access this appointment
+        if (!appointment.get().getDoctor().getDoctorId().equals(doctorId)) {
+            throw new GlobalException("Doctor is not authorized to access this appointment");
+        }
+        
+        // Find prescription by appointment ID
+        Optional<Prescription> prescription = prescriptionRepository.findByAppointmentAppointmentId(appointmentId);
+        if (!prescription.isPresent()) {
+            throw new GlobalException("No prescription found for this appointment");
+        }
+        
+        return prescription.get();
+    }
+
+	@Override
+	public boolean existsByAppointmentId(Integer aid) {
+		boolean exists = prescriptionRepository.existsByAppointmentId(aid);
+		return exists;
 	}
 }

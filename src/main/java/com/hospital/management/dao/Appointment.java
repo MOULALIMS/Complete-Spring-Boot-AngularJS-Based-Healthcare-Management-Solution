@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -29,12 +28,12 @@ public class Appointment {
 	private Integer appointmentId;
 	
 	@ManyToOne
-	@JsonIgnore
+	//@JsonIgnore
 	@JoinColumn(name = "user_id", nullable = false)
 	private User user;
 	
 	@ManyToOne
-	@JsonIgnore
+	//@JsonIgnore
 	@JoinColumn(name = "doctor_id", nullable = false)
 	private Doctor doctor;
 	
@@ -42,8 +41,10 @@ public class Appointment {
 	@JsonFormat(pattern = "yyyy-MM-dd")
 	private LocalDate dateOfAppointment;
 	
-	@Column(name = "appointment_time", nullable = true)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+	@Column(name = "appointment_time")
 	private LocalTime appointmentTime;
+
 	
 	@OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
 	private Prescription prescription;

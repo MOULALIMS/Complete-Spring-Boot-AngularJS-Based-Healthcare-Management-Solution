@@ -1,5 +1,9 @@
 package com.hospital.management.service;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.List;
 
 import java.util.Optional;
@@ -11,6 +15,7 @@ import com.hospital.management.dao.Appointment;
 import com.hospital.management.dao.AppointmentStatus;
 import com.hospital.management.dao.Doctor;
 import com.hospital.management.dao.User;
+import com.hospital.management.error.GlobalException;
 import com.hospital.management.error.RestResponseEntityExceptionHandler;
 import com.hospital.management.repository.AppointmentRepository;
 import com.hospital.management.repository.DoctorRepository;
@@ -40,23 +45,35 @@ public class AppointmentServiceImp implements AppointmentService{
 	 public Optional<Appointment> getAppointmentById(Integer id) {
 		 return appointmentRepository.findById(id);
 	 }
-
+	 
 	 @Override
-	 public Appointment addAppointment(Appointment appointment, Integer userId, Integer doctorId) {
-		 Appointment app = new Appointment();
-		 app.setDateOfAppointment(appointment.getDateOfAppointment());
-		 app.setAppointmentStatus(appointment.getAppointmentStatus());
-		 app.setAppointmentTime(appointment.getAppointmentTime());
-		 Doctor doctor = doctorRepository.findById(doctorId)
-				 .orElseThrow(() -> new RuntimeException("Doctor not found with ID: " + doctorId));
-
-		 // Fetch User
-		 User user = userRepository.findById(userId)
-				 .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
-		 app.setDoctor(doctor);
-		 app.setUser(user);
-		 return appointmentRepository.save(app);
-	 }
+	 public Appointment addAppointment(Appointment appointment, Integer userId, Integer doctorId) throws GlobalException {
+	    // Check if user already has appointment with this doctor on this day
+	    boolean hasAppointment = appointmentRepository.existsByUserAndDoctorAndDate(
+	    		userId, doctorId, appointment.getDateOfAppointment());
+	        
+	        if (hasAppointment) {
+	            throw new GlobalException("You already have an appointment with this doctor on this date.");
+	        }
+	        
+	        // Fetch doctor
+	        Doctor doctor = doctorRepository.findById(doctorId)
+	            .orElseThrow(() -> new GlobalException("Doctor not found with ID: " + doctorId));
+	        
+	        // Fetch user
+	        User user = userRepository.findById(userId)
+	            .orElseThrow(() -> new GlobalException("User not found with ID: " + userId));
+	        
+	        // Create appointment
+	        Appointment app = new Appointment();
+	        app.setDateOfAppointment(appointment.getDateOfAppointment());
+	        app.setAppointmentTime(appointment.getAppointmentTime());
+	        app.setAppointmentStatus(AppointmentStatus.PENDING); // Always start as PENDING
+	        app.setDoctor(doctor);
+	        app.setUser(user);
+	        
+	        return appointmentRepository.save(app);
+	    }
 	 
 	 @Override
 	 public void deleteAppointment(Integer id) {
@@ -84,5 +101,111 @@ public class AppointmentServiceImp implements AppointmentService{
         }
         return false;
 	}
+
+	@Override
+	public List<Appointment> getAppointmentsByDoctorID(Integer doctorId) {
+		return appointmentRepository.findByAppointmentByDoctorId(doctorId);
+	}
+
+	@Override
+	public List<Appointment> getTodayApprovedAppointments() {
+		LocalDate today = LocalDate.now();
+		return appointmentRepository.findApprovedAppointmentsForToday(today);
+	}
+
+	@Override
+	public List<Appointment> getTodayApprovedAppointmentsForDoctor(Integer doctorId) {
+		LocalDate today = LocalDate.now();
+		return appointmentRepository.findTodayApprovedAppointmentsByDoctor(doctorId, today);
+	}
+
+	@Override
+	public List<Appointment> getTodayAppointments() {
+		LocalDate today = LocalDate.now();
+		return appointmentRepository.findTodayAppointments(today);
+	}
+
+	@Override
+	public Integer getTotalAppointmentsToday() {
+		return appointmentRepository.countTotalAppointmentsToday(LocalDate.now());	
+	}
+
+	@Override
+	public Integer getTotalAppointmentsByDoctor(Integer doctorId) {
+		return appointmentRepository.countAppointmentsTodayByDoctor(LocalDate.now(), doctorId);
+	}
+
+	@Override
+	public Integer getApprovedAppointmentsTodayByDoctor(Integer doctorId) {
+		return appointmentRepository.countApprovedAppointmentsTodayByDoctor(LocalDate.now(), doctorId);
+	}
+
+	@Override
+	public List<Appointment> getAppointmentsByDoctorAndUser(Integer doctorId, Integer userId) {
+		return appointmentRepository.findByDoctorDoctorIdAndUserUserId(doctorId, userId);
+	}
+
+	@Override
+	public List<Appointment> getPatientHistoryForDoctor(Integer doctorId, Integer userId) {
+		return appointmentRepository.findByDoctorDoctorIdAndUserUserIdOrderByDateOfAppointmentDesc(doctorId, userId);
+	}
+	
+	@Override
+	public Appointment updateAppointmentStatusByStaff(Integer id, String status) throws GlobalException {
+	    Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
+	    if (!optionalAppointment.isPresent()) {
+	        throw new GlobalException("Appointment not found with ID: " + id);
+	    }
+	    
+	    Appointment appointment = optionalAppointment.get();
+	    try {
+	    	
+	        AppointmentStatus newStatus = AppointmentStatus.valueOf(status.toUpperCase());
+	        appointment.setAppointmentStatus(newStatus);
+	        return appointmentRepository.save(appointment);
+	    } catch (IllegalArgumentException e) {
+	        throw new GlobalException("Invalid appointment status: " + status);
+	    }
+	}
+
+	@Override
+	public Appointment postponeAppointment(Integer id, String newDate, String newTime) throws GlobalException {
+	    Optional<Appointment> optionalAppointment = appointmentRepository.findById(id);
+	    if (!optionalAppointment.isPresent()) {
+	        throw new GlobalException("Appointment not found with ID: " + id);
+	    }
+	    
+	    Appointment appointment = optionalAppointment.get();
+	    try {
+	        LocalDate date = LocalDate.parse(newDate);
+	        appointment.setDateOfAppointment(date);
+	        appointment.setAppointmentTime(LocalTime.parse(newTime));
+	        return appointmentRepository.save(appointment);
+	    } catch (DateTimeParseException e) {
+	        throw new GlobalException("Invalid date format. Use YYYY-MM-DD");
+	    }
+	}
+
+	@Override
+	public List<Appointment> getAppointmentsByDate(String dateStr) {
+	    try {
+	        LocalDate date = LocalDate.parse(dateStr);
+	        return appointmentRepository.findByDateOfAppointment(date);
+	    } catch (DateTimeParseException e) {
+	        return new ArrayList<>();
+	    }
+	}
+
+	@Override
+	public List<Appointment> getAppointmentsByDateAndDoctor(String dateStr, Integer doctorId) {
+	    try {
+	        LocalDate date = LocalDate.parse(dateStr);
+	        return appointmentRepository.findByDateOfAppointmentAndDoctorDoctorId(date, doctorId);
+	    } catch (DateTimeParseException
+	    		e) {
+	        return new ArrayList();
+	    }
+	}
+
 
 }

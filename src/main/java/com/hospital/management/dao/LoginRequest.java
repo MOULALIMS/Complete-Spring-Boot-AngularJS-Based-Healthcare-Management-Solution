@@ -14,5 +14,10 @@ public class LoginRequest {
 	
 	public String getPassword() {
 		return password;
+	}
+	public LoginRequest() {
+		super();
+		// TODO Auto-generated constructor stub
 	}	
+	
 }
