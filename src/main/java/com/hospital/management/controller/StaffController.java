@@ -19,6 +19,7 @@ import com.hospital.management.dao.Receptionist;
 import com.hospital.management.error.GlobalException;
 import com.hospital.management.service.AppointmentService;
 import com.hospital.management.service.StaffService;
+
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api")
@@ -39,10 +40,21 @@ public class StaffController {
 		return ResponseEntity.ok(rec);
 	}
 	
+	// Update Staff Profile
+	@PutMapping("/staff/updatereceptionist/{id}")
+	public ResponseEntity<?> updateStaff(@PathVariable Integer id, @RequestBody Receptionist receptionist) throws GlobalException{
+		Receptionist res = staffService.updateStaff(id, receptionist);
+		if(res == null) {
+			throw new GlobalException("Receptionist not Found!");
+		}
+		return ResponseEntity.ok(res);
+	}
+	
+	// Update Appointment Status - Approved or Cancelled
 	@PutMapping("/staff/update-appointment-status/{id}/{status}")
-	public ResponseEntity<String> updateAppointmentStatus(@PathVariable Integer id, @PathVariable String status) throws GlobalException {
+	public ResponseEntity<?> updateAppointmentStatus(@PathVariable Integer id, @PathVariable String status) throws GlobalException {
 	    Appointment appointment = appointmentService.updateAppointmentStatusByStaff(id, status);
-		return ResponseEntity.ok("Appointment status updated to " + status);
+		return ResponseEntity.ok(appointment);
 	}
 
 	@PutMapping("/staff/postpone-appointment/{id}")
