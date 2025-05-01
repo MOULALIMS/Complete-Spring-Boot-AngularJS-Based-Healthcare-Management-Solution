@@ -60,13 +60,13 @@ public class AdminController {
 
     // Add a new doctor
     @PostMapping("/admin/addDoctor")
-    public Doctor addDoctor(@RequestBody Doctor doctor) throws GlobalException {
+    public Doctor addDoctor(@Valid @RequestBody Doctor doctor) throws GlobalException {
         return doctorService.addDoctor(doctor);
     }
 
     // Update a doctor
     @PutMapping("/admin/doctors/{id}")
-    public Doctor updateDoctor(@PathVariable Integer id, @RequestBody Doctor updatedDoctor) throws GlobalException {
+    public Doctor updateDoctor(@PathVariable Integer id, @Valid @RequestBody Doctor updatedDoctor) throws GlobalException {
         Doctor existing = doctorService.getDoctorById(id);
         if (existing!=null) {
             existing.setFirstName(updatedDoctor.getFirstName());
@@ -92,7 +92,7 @@ public class AdminController {
     // ======================== USERS ==========================
 
     @PostMapping("/admin/addUsers")
-    public List<User> addUsers(@RequestBody List<User> users){
+    public List<User> addUsers(@Valid @RequestBody List<User> users){
     	return userService.addUsers(users);
     }
     @GetMapping("/admin/users")
@@ -145,18 +145,18 @@ public class AdminController {
     
     // Update Staff
     @PutMapping("/admin/updateStaff/{id}")
-    public Receptionist updateStaff(@PathVariable Integer id, @RequestBody Receptionist receptionist) throws GlobalException{
+    public Receptionist updateStaff(@PathVariable Integer id, @Valid @RequestBody Receptionist receptionist) throws GlobalException{
     	return staffService.updateStaff(id, receptionist);
     }
     
     // Save multiple Staff
     @PostMapping("/admin/addStaffs")
-    public List<Receptionist> saveStaffs(@RequestBody List<Receptionist> receptionists){
+    public List<Receptionist> saveStaffs(@Valid @RequestBody List<Receptionist> receptionists){
     	return staffService.saveAllStaff(receptionists);
     }
     // Save New Staff
     @PostMapping("/admin/addStaff")
-    public Receptionist saveStaff(@RequestBody Receptionist receptionist) {
+    public Receptionist saveStaff(@Valid @RequestBody Receptionist receptionist) {
     	return staffService.saveStaff(receptionist);
     }
     

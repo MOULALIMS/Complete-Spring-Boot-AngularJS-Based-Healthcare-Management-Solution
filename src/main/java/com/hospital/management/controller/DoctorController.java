@@ -1,6 +1,7 @@
 package com.hospital.management.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,8 @@ import com.hospital.management.error.GlobalException;
 import com.hospital.management.service.AppointmentService;
 import com.hospital.management.service.DoctorService;
 import com.hospital.management.service.PrescriptionService;
+
+import jakarta.validation.Valid;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -61,7 +64,7 @@ public class DoctorController {
     public ResponseEntity<Prescription> createPrescription(@PathVariable Integer did, 
     														@PathVariable Integer uid,
     														@PathVariable Integer aid,
-    														@RequestBody Prescription prescription) throws GlobalException{
+    														@Valid @RequestBody Prescription prescription) throws GlobalException{
     	return prescriptionService.createPrescription(did, uid, aid, prescription);
     }
     
@@ -70,7 +73,7 @@ public class DoctorController {
     public ResponseEntity<Prescription> updatePrescription(@PathVariable Integer did, 
     														@PathVariable Integer uid,
     														@PathVariable Integer aid,
-    														@RequestBody Prescription prescription) throws GlobalException{
+    														@Valid @RequestBody Prescription prescription) throws GlobalException{
     	Prescription prescription2 = prescriptionService.updatePrescription(did, uid, aid, prescription);
     	return ResponseEntity.ok(prescription2);
     }	
@@ -111,30 +114,41 @@ public class DoctorController {
     
     // Update Doctor
     @PutMapping("/doctors/updateDoctor/{did}")
-    public ResponseEntity<?> updateDoctor(@PathVariable Integer did, @RequestBody Doctor doctor) throws GlobalException{
+    public ResponseEntity<?> updateDoctor(@PathVariable Integer did, @Valid @RequestBody Doctor doctor) throws GlobalException{
     	Doctor newDoctor = doctorService.updateDoctor(did, doctor);
     	return ResponseEntity.ok(newDoctor);
     }
     
- // Get appointments for a specific doctor with a specific user
+    // Get appointments for a specific doctor with a specific user
     @GetMapping("/doctors/{doctorId}/users/{userId}/appointments")
     public ResponseEntity<List<Appointment>> getAppointmentsByDoctorAndUser(
             @PathVariable Integer doctorId, 
             @PathVariable Integer userId) {
         List<Appointment> appointments = appointmentService.getAppointmentsByDoctorAndUser(doctorId, userId);
+        for (Appointment appointment : appointments) {
+            Optional<Prescription> prescOpt = prescriptionService.getPrescriptionByAppointment(appointment.getAppointmentId());
+            if(prescOpt.isPresent()) {
+            	appointment.setPrescription(prescOpt.get());
+            }
+        }
         return ResponseEntity.ok(appointments);
     }
     
- // Get patient history for a doctor
     @GetMapping("/doctors/{doctorId}/patients/{userId}/history")
     public ResponseEntity<List<Appointment>> getPatientHistory(
             @PathVariable Integer doctorId,
             @PathVariable Integer userId) {
         List<Appointment> history = appointmentService.getPatientHistoryForDoctor(doctorId, userId);
+        for (Appointment appointment : history) {
+            Optional<Prescription> prescOpt = prescriptionService.getPrescriptionByAppointment(appointment.getAppointmentId());
+            if(prescOpt.isPresent()) {
+                appointment.setPrescription(prescOpt.get());
+            }
+        }
         return ResponseEntity.ok(history);
     }
     
- // Strictly get only approved appointments for this doctor
+    // Strictly get only approved appointments for this doctor
     @GetMapping("/doctors/appointmentsToday/{doctorId}")
     public ResponseEntity<List<Appointment>> getTodayApprovedAppointments(@PathVariable Integer doctorId) {
         List<Appointment> appointments = appointmentService.getTodayApprovedAppointmentsForDoctor(doctorId);

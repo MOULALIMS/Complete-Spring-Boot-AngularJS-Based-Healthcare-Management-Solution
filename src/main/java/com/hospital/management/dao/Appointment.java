@@ -4,6 +4,9 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -17,41 +20,47 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "appointment")
 public class Appointment {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "appointment_id")
-	private Integer appointmentId;
-	
-	@ManyToOne
-	//@JsonIgnore
-	@JoinColumn(name = "user_id", nullable = false)
-	private User user;
-	
-	@ManyToOne
-	//@JsonIgnore
-	@JoinColumn(name = "doctor_id", nullable = false)
-	private Doctor doctor;
-	
-	@Column(name = "appointment_date", nullable = true)
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	private LocalDate dateOfAppointment;
-	
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
-	@Column(name = "appointment_time")
-	private LocalTime appointmentTime;
+	 @Id
+	 @GeneratedValue(strategy = GenerationType.IDENTITY)
+	 @Column(name = "appointment_id")
+	 private Integer appointmentId;
 
-	
-	@OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
-	private Prescription prescription;
-	
-	@Enumerated(EnumType.STRING)
-	private AppointmentStatus appointmentStatus;
+	    //@NotNull(message = "User is required")
+	    @ManyToOne
+	    @JoinColumn(name = "user_id", nullable = false)
+	    @JsonIgnoreProperties({"appointments", "prescriptions"})
+	    private User user;
 
+	    //@NotNull(message = "Doctor is required")
+	    @ManyToOne
+	    @JoinColumn(name = "doctor_id", nullable = false)
+	    @JsonIgnoreProperties({"appointments", "prescriptions"})
+	    private Doctor doctor;
+
+	    @NotNull(message = "Appointment date is required")
+	    @Column(name = "appointment_date", nullable = true)
+		@JsonFormat(pattern = "yyyy-MM-dd")
+	    private LocalDate dateOfAppointment;
+
+	    @NotNull(message = "Appointment time is required")
+	    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss")
+		@Column(name = "appointment_time")
+	    private LocalTime appointmentTime;
+
+	    @JsonManagedReference
+	    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL)
+	    private Prescription prescription;
+
+	    @NotNull(message = "Appointment status is required")
+	    @Enumerated(EnumType.STRING)
+	    private AppointmentStatus appointmentStatus = AppointmentStatus.PENDING;
+	 
 	
 	public Appointment() {
 		super();
@@ -120,6 +129,16 @@ public class Appointment {
 
 	public void setAppointmentStatus(AppointmentStatus appointmentStatus) {
 		this.appointmentStatus = appointmentStatus;
+	}
+
+
+	public Prescription getPrescription() {
+		return prescription;
+	}
+
+
+	public void setPrescription(Prescription prescription) {
+		this.prescription = prescription;
 	}
 	
 }

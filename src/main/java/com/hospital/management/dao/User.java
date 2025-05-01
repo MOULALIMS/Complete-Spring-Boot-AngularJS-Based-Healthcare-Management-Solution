@@ -8,56 +8,72 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "user")
 public class User {
-    
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")
     private Integer userId;
-    
+
+    @NotBlank(message = "First name is required")
+    @Size(max = 50, message = "First name must be less than 50 characters")
     @Column(name = "first_name", nullable = false)
     private String firstName;
-    
+
+    @Size(max = 50, message = "Middle name must be less than 50 characters")
     @Column(name = "middle_name")
     private String middleName;
-    
+
+    @NotBlank(message = "Last name is required")
+    @Size(max = 50, message = "Last name must be less than 50 characters")
     @Column(name = "last_name", nullable = false)
     private String lastName;
-    
+
+    @NotBlank(message = "Email is required")
+    @Email(message = "Invalid email format")
     @Column(name = "email", nullable = false, unique = true)
     private String email;
-    
+
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters")
     @Column(name = "password", nullable = false)
     private String password;
-    
+
+    @NotBlank(message = "Phone number is required")
+    @Pattern(regexp = "^\\+?[0-9]{10,15}$", message = "Invalid phone number format")
     @Column(name = "phone", nullable = false, unique = true)
     private String phone;
-    
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role;
-    
-    @Column(name = "gender")
-    private Gender gender;
-    
-    @Column(name = "photoURL")
-    private String photoURL;
-        
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Appointment> appointment;
-    
-    @Column(name = "date_of_birth")
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private LocalDate dateOfBirth;
-    
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    @JsonIgnore
-    private List<Prescription> prescriptions;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, columnDefinition = "ENUM('ADMIN', 'DOCTOR', 'STAFF', 'USER')")
+    private UserRole role = UserRole.USER;
+
+    @Enumerated(EnumType.STRING)
+    private Gender gender;
+
+    @Column(name = "photo_url", length = 255)
+    private String photoURL;
+
+    @NotNull(message = "Date of birth is required")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "date_of_birth")
+    private LocalDate dateOfBirth;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointment;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Prescription> prescriptions;
+    
     public User() {
     	this.role = UserRole.USER;
     }

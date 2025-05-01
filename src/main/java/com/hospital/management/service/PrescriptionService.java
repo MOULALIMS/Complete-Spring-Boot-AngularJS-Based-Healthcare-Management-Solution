@@ -1,6 +1,7 @@
 package com.hospital.management.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 
@@ -20,5 +21,7 @@ public interface PrescriptionService {
 	public Prescription getPrescriptionByAppointmentId(Integer did, Integer aid) throws GlobalException;
 
 	public boolean existsByAppointmentId(Integer aid);
+
+	public Optional<Prescription> getPrescriptionByAppointment(Integer appointmentId);
 
 }

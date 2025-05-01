@@ -4,42 +4,52 @@ import java.time.LocalDate;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 
 @Entity
 @Table(name = "prescription")
 public class Prescription {
-
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer prescriptionId;
 
+    @JsonBackReference
     @OneToOne
     @JoinColumn(name = "appointment_id", referencedColumnName = "appointment_id")
     private Appointment appointment;
-    
+
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonIgnoreProperties({"appointments", "prescriptions"})
     private User user;
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
+    @JsonIgnoreProperties({"appointments", "prescriptions"})
     private Doctor doctor;
 
     @CreationTimestamp
     @Column(name = "date_created", updatable = false)
     private LocalDate dateCreated;
 
-    @Column(name = "notes")
-    private String notes;
-
-    @Column(name = "symptoms")
+    @NotBlank(message = "Symptoms description is required")
+    @Column(name = "symptoms", nullable = false)
     private String symptoms;
 
-    @Column(name = "medicines")
+    @NotBlank(message = "Medicines list is required")
+    @Column(name = "medicines", nullable = false)
     private String medicines;
+
+    @Column(name = "notes")
+    private String notes;
 
     // Automatically set dateCreated when new object is persisted
     @PrePersist

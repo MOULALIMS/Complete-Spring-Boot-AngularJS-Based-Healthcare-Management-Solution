@@ -57,7 +57,12 @@ public interface AppointmentRepository extends JpaRepository<Appointment, Intege
     @Query("SELECT COUNT(a) > 0 FROM Appointment a WHERE a.user.userId = :userId AND a.doctor.doctorId = :doctorId AND a.dateOfAppointment = :date")
     boolean existsByUserAndDoctorAndDate(@Param("userId") Integer userId, @Param("doctorId") Integer doctorId, @Param("date") LocalDate date);
 
-    List<Appointment> findByDateOfAppointment(LocalDate date);
+    @Query("SELECT a FROM Appointment a WHERE a.dateOfAppointment= :date")
+    List<Appointment> findByDateOfAppointment(@Param("date") LocalDate date);
+    
+    @Query("SELECT a FROM Appointment a LEFT JOIN FETCH a.prescription WHERE a.dateOfAppointment = :date")
+    List<Appointment> findByDateOfAppointmentWithPrescription(@Param("date") LocalDate date);
+    
     List<Appointment> findByDateOfAppointmentAndDoctorDoctorId(LocalDate date, Integer doctorId);
 
 }

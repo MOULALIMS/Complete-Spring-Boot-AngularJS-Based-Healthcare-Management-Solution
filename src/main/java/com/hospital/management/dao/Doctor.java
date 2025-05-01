@@ -5,81 +5,84 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "doctor")
 public class Doctor {
-
-    @Id
+	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "doctor_id")
     private Integer doctorId;
 
+    @NotBlank(message = "First name is required")
+    @Size(max = 50, message = "First name must be less than 50 characters")
     @Column(name = "first_name", nullable = false)
-    @NotBlank(message = "first name should not be null")
     private String firstName;
 
+    @Size(max = 50, message = "Middle name must be less than 50 characters")
     @Column(name = "middle_name")
     private String middleName;
 
-    @Column(name = "last_name", nullable = false)
     @NotBlank(message = "Last name is required")
+    @Size(max = 50, message = "Last name must be less than 50 characters")
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "email", unique = true, nullable = false)
     @NotBlank(message = "Email is required")
+    //@Email(message = "Invalid email format")
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
 
-    @Column(name = "password", nullable = false)
     @NotBlank(message = "Password is required")
     @Size(min = 6, message = "Password must be at least 6 characters")
+    @Column(name = "password", nullable = false)
     private String password;
-    
+
+    @NotBlank(message = "Phone number is required")
+    //@Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Invalid phone number format")
     @Column(name = "phone", nullable = false)
     private String phone;
-    
-    @Column(name = "gender")
-    private Gender gender;
 
-    @Column(name = "specialization", nullable = false)
     @NotBlank(message = "Specialization is required")
+    @Size(max = 100, message = "Specialization must be less than 100 characters")
+    @Column(name = "specialization", nullable = false)
     private String specialization;
 
-    @Column(name = "experience_years")
     @NotNull(message = "Experience is required")
     @Min(value = 0, message = "Experience cannot be negative")
+    @Column(name = "experience_years")
     private Integer experienceYears;
-    
-    @Column(name = "photoURL")
-    private String photoURL;
 
-    @Column(name = "qualifications", nullable = false)
     @NotBlank(message = "Qualifications are required")
+    @Size(max = 200, message = "Qualifications must be less than 200 characters")
+    @Column(name = "qualifications", nullable = false)
     private String qualifications;
-    /*
-    @OneToMany(mappedBy = "doctor")
-    private List<Patient> patients;
-    */
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Appointment> appointment;
-    
+
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private UserRole role;
+    @Column(nullable = false, columnDefinition = "ENUM('ADMIN', 'DOCTOR', 'STAFF', 'USER')")
+    private UserRole role = UserRole.DOCTOR;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "ENUM('FEMALE', 'MALE', 'OTHER')")
+    private Gender gender;
     
-    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+    @Column(name = "photo_url", length = 255)
+    private String photoURL;
+    
     @JsonIgnore
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Appointment> appointment;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
     private List<Prescription> prescriptions;
     
-    @PrePersist
-    protected void onCreate() {
-        this.role = UserRole.DOCTOR;
-    }
     
     public Doctor() {}
 

@@ -1,5 +1,7 @@
 package com.hospital.management.service;
 
+import java.util.ArrayList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,7 +102,13 @@ public class PrescriptionServiceImp implements PrescriptionService{
 
 	@Override
 	public List<Prescription> getPrescriptionsByUserId(Integer uid) {
-		return prescriptionRepository.findPrescriptionsByUserUserId(uid);
+		Optional<User> user = userRepository.findById(uid);
+	    if (!user.isPresent()) {
+	        return new ArrayList<>(); // Return empty list if user not found
+	    }
+	    
+	    // Return the prescriptions for this user
+	    return prescriptionRepository.findByUserUserId(uid);
 	}
 	
 	@Override
@@ -135,5 +143,10 @@ public class PrescriptionServiceImp implements PrescriptionService{
 	public boolean existsByAppointmentId(Integer aid) {
 		boolean exists = prescriptionRepository.existsByAppointmentId(aid);
 		return exists;
+	}
+	
+	@Override
+	public Optional<Prescription> getPrescriptionByAppointment(Integer appointmentId) {
+	    return prescriptionRepository.findByAppointmentAppointmentId(appointmentId); // Handle Optional properly
 	}
 }

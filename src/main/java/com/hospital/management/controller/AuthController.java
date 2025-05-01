@@ -21,6 +21,8 @@ import com.hospital.management.service.DoctorService;
 import com.hospital.management.service.StaffService;
 import com.hospital.management.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/api/auth")
 @CrossOrigin(origins = "http://localhost:4200")
@@ -35,7 +37,7 @@ public class AuthController {
 	private StaffService staffService;
 	
 	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
+	public ResponseEntity<?> login(@Valid @RequestBody LoginRequest loginRequest) {
 	    Optional<User> user = userService.getUserByEmail(loginRequest.getEmail());
 	    
 	    if (user.isEmpty() || !user.get().getPassword().equals(loginRequest.getPassword())) {
@@ -46,7 +48,7 @@ public class AuthController {
 	}
 
 	@PostMapping("/registerUser")
-	public ResponseEntity<?> register(@RequestBody User user) {
+	public ResponseEntity<?> register(@Valid @RequestBody User user) {
 	    try {
 	        User newUser = userService.addUser(user);
 	        return ResponseEntity.ok(new AuthResponse(newUser));
@@ -56,7 +58,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/doctor/login")
-	public ResponseEntity<?> loginDoctor(@RequestBody LoginRequest loginRequest) throws GlobalException{
+	public ResponseEntity<?> loginDoctor(@Valid @RequestBody LoginRequest loginRequest) throws GlobalException{
 		Doctor doctor = doctorService.findDoctorByEmail(loginRequest.getEmail());
 		if(doctor == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No User Found");
@@ -68,7 +70,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/staff/login")
-	public ResponseEntity<?> staffLogin(@RequestBody LoginRequest loginRequest) throws GlobalException{
+	public ResponseEntity<?> staffLogin(@Valid @RequestBody LoginRequest loginRequest) throws GlobalException{
 		Receptionist staff = staffService.findStaffByEmail(loginRequest.getEmail());
 		if(staff==null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No Staff Found");

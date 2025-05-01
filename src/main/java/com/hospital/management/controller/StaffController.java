@@ -20,6 +20,8 @@ import com.hospital.management.error.GlobalException;
 import com.hospital.management.service.AppointmentService;
 import com.hospital.management.service.StaffService;
 
+import jakarta.validation.Valid;
+
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/api")
@@ -42,7 +44,7 @@ public class StaffController {
 	
 	// Update Staff Profile
 	@PutMapping("/staff/updatereceptionist/{id}")
-	public ResponseEntity<?> updateStaff(@PathVariable Integer id, @RequestBody Receptionist receptionist) throws GlobalException{
+	public ResponseEntity<?> updateStaff(@PathVariable Integer id, @Valid @RequestBody Receptionist receptionist) throws GlobalException{
 		Receptionist res = staffService.updateStaff(id, receptionist);
 		if(res == null) {
 			throw new GlobalException("Receptionist not Found!");
@@ -60,7 +62,7 @@ public class StaffController {
 	@PutMapping("/staff/postpone-appointment/{id}")
 	public ResponseEntity<String> postponeAppointment(
 	        @PathVariable Integer id, 
-	        @RequestBody Map<String, Object> appointmentDetails) throws GlobalException {
+	        @Valid @RequestBody Map<String, Object> appointmentDetails) throws GlobalException {
         String newDate = (String) appointmentDetails.get("dateOfAppointment");
 		String newTime = (String) appointmentDetails.get("appointmentTime");
 

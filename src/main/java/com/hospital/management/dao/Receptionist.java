@@ -13,54 +13,63 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "receptionist")
 public class Receptionist {
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "staff_id")
-	private Integer Id;
-	
-	@Column(name = "first_name", nullable = false, length = 10)
-	private String firstName;
-	
-	@Column(name = "middle_name")
-	private String middleName;
-	
-	@Column(name = "last_name", nullable = false, length = 20)
-	private String lastName;
-	
-	@Column(name = "email", nullable = false, unique = true)
-	private String email;
-	
-	@Column(name = "phone", nullable = false, unique = true)
-	private String phone;
-	
-	@Column(name = "password", nullable = false)
-	private String password;
-	
-	@Column(name = "gender")
-	private Gender gender;
-	
-	@JsonFormat(pattern = "yyyy-MM-dd")
-	@Column(name = "joining_date")
-	private LocalDate joiningDate;
-	
-	@Column(name = "photoURL")
-	private String photoURL;
-	
-	@Enumerated(EnumType.STRING)
-	@Column(nullable = false)
-	private UserRole role;
+	   @Id
+	    @GeneratedValue(strategy = GenerationType.IDENTITY)
+	    @Column(name = "staff_id")
+	    private Integer id;
 
-	@PrePersist
-	protected void onCreate() {
-		this.joiningDate = LocalDate.now();
-		this.role = UserRole.STAFF;
-	}
-	
+	    @NotBlank(message = "First name is required")
+	    @Size(max = 50, message = "First name must be less than 50 characters")
+	    @Column(name = "first_name", nullable = false)
+	    private String firstName;
+
+	    @Size(max = 50, message = "Middle name must be less than 50 characters")
+	    @Column(name = "middle_name")
+	    private String middleName;
+
+	    @NotBlank(message = "Last name is required")
+	    @Size(max = 50, message = "Last name must be less than 50 characters")
+	    @Column(name = "last_name", nullable = false)
+	    private String lastName;
+
+	    @NotBlank(message = "Email is required")
+	    @Email(message = "Invalid email format")
+	    @Column(name = "email", unique = true, nullable = false)
+	    private String email;
+
+	    @NotBlank(message = "Password is required")
+	    @Size(min = 6, message = "Password must be at least 6 characters")
+	    @Column(name = "password", nullable = false)
+	    private String password;
+
+	    @NotBlank(message = "Phone number is required")
+	    @Pattern(regexp = "^[+]?[0-9]{10,15}$", message = "Invalid phone number format")
+	    @Column(name = "phone", unique = true, nullable = false)
+	    private String phone;
+
+	    @Enumerated(EnumType.STRING)
+	    @Column(columnDefinition = "ENUM('FEMALE', 'MALE', 'OTHER')")
+	    private Gender gender;
+
+	    @JsonFormat(pattern = "yyyy-MM-dd")
+	    @Column(name = "joining_date", updatable = false)
+	    private LocalDate joiningDate;
+
+	    @Column(name = "photo_url", length = 255)
+	    private String photoURL;
+
+	    @Enumerated(EnumType.STRING)
+	    @Column(nullable = false)
+	    private UserRole role = UserRole.STAFF;
+	    
 	public Receptionist() {
 		super();
 	}
@@ -174,7 +183,7 @@ public class Receptionist {
 	}
 
 	public Integer getId() {
-		return Id;
+		return id;
 	}
 	
 	
