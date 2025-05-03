@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.hospital.management.dao.Appointment;
@@ -123,5 +124,13 @@ public class StaffController {
     @GetMapping("/staff/countAllAppointmentsToday")
     public ResponseEntity<Integer> getTotalAppointmentsCount(){
     	return ResponseEntity.ok(appointmentService.getTotalAppointmentsToday());
+    }
+    
+    @GetMapping("/staff/appointments/search")
+    public List<Appointment> searchAppointments(
+        @RequestParam(required = false) String date,
+        @RequestParam(required = false) Integer doctorId
+    ) {
+        return appointmentService.searchAppointments(date, doctorId);
     }
 }

@@ -54,5 +54,7 @@ public interface AppointmentService {
 	public List<Appointment> getAppointmentsByDate(String date);
 
 	public List<Appointment> getAppointmentsByDateAndDoctor(String date, Integer doctorId);
+
+	public List<Appointment> searchAppointments(String date, Integer doctorId);
 	
 }

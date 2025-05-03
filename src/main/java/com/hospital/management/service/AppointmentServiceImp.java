@@ -193,7 +193,7 @@ public class AppointmentServiceImp implements AppointmentService{
 	    try {
 	        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 	        LocalDate date = LocalDate.parse(dateStr, formatter);
-	        return appointmentRepository.findByDateOfAppointmentWithPrescription(date);
+	        return appointmentRepository.findByDateOfAppointment(date);
 	    } catch (DateTimeParseException e) {
 	        System.err.println("Invalid date format: " + dateStr);
 	        return new ArrayList<>();
@@ -230,6 +230,21 @@ public class AppointmentServiceImp implements AppointmentService{
 	    		e) {
 	        return new ArrayList();
 	    }
+	}
+
+	@Override
+	public List<Appointment> searchAppointments(String dateStr, Integer doctorId) {
+		if (dateStr != null && doctorId != null) {
+            LocalDate date = LocalDate.parse(dateStr);
+            return appointmentRepository.findByDateOfAppointmentAndDoctorDoctorId(date, doctorId);
+        } else if (dateStr != null) {
+            LocalDate date = LocalDate.parse(dateStr);
+            return appointmentRepository.findByDateOfAppointment(date);
+        } else if (doctorId != null) {
+            return appointmentRepository.findByDoctorDoctorId(doctorId);
+        } else {
+            return appointmentRepository.findAll(); // Or recent appointments if preferred
+        }
 	}
 
 
