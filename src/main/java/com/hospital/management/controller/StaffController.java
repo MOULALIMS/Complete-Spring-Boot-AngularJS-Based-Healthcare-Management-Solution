@@ -61,14 +61,10 @@ public class StaffController {
 	}
 
 	@PutMapping("/staff/postpone-appointment/{id}")
-	public ResponseEntity<String> postponeAppointment(
-	        @PathVariable Integer id, 
-	        @Valid @RequestBody Map<String, Object> appointmentDetails) throws GlobalException {
-        String newDate = (String) appointmentDetails.get("dateOfAppointment");
-		String newTime = (String) appointmentDetails.get("appointmentTime");
-
-		appointmentService.postponeAppointment(id, newDate, newTime);
-		return ResponseEntity.ok("Appointment rescheduled successfully");
+	public Appointment postponeAppointment(@PathVariable Integer id, @RequestBody Map<String, String> body) throws GlobalException {
+	    String newDate = body.get("dateOfAppointment");
+	    String newTime = body.get("appointmentTime");
+	    return appointmentService.postponeAppointment(id, newDate, newTime);
 	}
 
 	@GetMapping("/staff/appointments-by-date/{date}")

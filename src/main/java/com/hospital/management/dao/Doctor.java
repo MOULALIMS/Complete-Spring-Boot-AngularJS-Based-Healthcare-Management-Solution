@@ -84,6 +84,7 @@ public class Doctor {
     private List<Prescription> prescriptions;
     
     
+    
     public Doctor() {}
 
     public Doctor(String firstName, String middleName, String lastName, String email, 

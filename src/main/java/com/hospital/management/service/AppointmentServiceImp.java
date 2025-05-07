@@ -129,7 +129,8 @@ public class AppointmentServiceImp implements AppointmentService{
 
 	@Override
 	public Integer getTotalAppointmentsToday() {
-		return appointmentRepository.countTotalAppointmentsToday(LocalDate.now());	
+		LocalDate date = LocalDate.now();
+		return appointmentRepository.countTotalAppointmentsToday(date);	
 	}
 
 	@Override
@@ -182,6 +183,7 @@ public class AppointmentServiceImp implements AppointmentService{
 	        LocalDate date = LocalDate.parse(newDate);
 	        appointment.setDateOfAppointment(date);
 	        appointment.setAppointmentTime(LocalTime.parse(newTime));
+	       
 	        return appointmentRepository.save(appointment);
 	    } catch (DateTimeParseException e) {
 	        throw new GlobalException("Invalid date format. Use YYYY-MM-DD");
@@ -246,6 +248,4 @@ public class AppointmentServiceImp implements AppointmentService{
             return appointmentRepository.findAll(); // Or recent appointments if preferred
         }
 	}
-
-
 }
